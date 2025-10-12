@@ -205,11 +205,40 @@
 }
 
 @media (max-width: 768px) {
-  .game-content {
-    flex-direction: column;
+  .game-container {
+    padding: 1rem;
   }
 
   .game-title {
     font-size: 2rem;
+  }
+
+  .game-content {
+    gap: 1rem;
+    overflow-x: auto;
+  }
+
+  .board {
+    padding: 1rem;
+  }
+
+  .board-grid {
+    width: 240px;
+    gap: 0.5rem;
+  }
+
+  .square {
+    font-size: 2rem;
+  }
+
+  .game-sidebar {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .mode-selector,
+  .game-info {
+    min-width: 200px;
+    padding: 1rem;
   }
 }
