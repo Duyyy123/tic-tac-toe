@@ -37,6 +37,8 @@ export const useTicTacToe = () => {
   const [oCount, setOCount] = useState(0);
   const [xCount, setXCount] = useState(0);
   const [dCount, setDCount] = useState(0);
+  const [positionsEvaluated, setPositionsEvaluated] = useState(0);
+  const [thinkingTime, setThinkingTime] = useState(0.0);
 
   const handleGameModeChange = (mode) => {
     setGameMode(mode);
@@ -107,9 +109,14 @@ export const useTicTacToe = () => {
       return;
     }
     if (isBotTurn) {
-      const botMove = getBestMove(squares, botDifficulty);
-      if (botMove !== undefined) {
-        handleClick(botMove);
+      const { move, positionsEvaluated, thinkingTime } = getBestMove(
+        squares,
+        botDifficulty,
+      );
+      if (move !== undefined) {
+        setPositionsEvaluated(positionsEvaluated);
+        setThinkingTime(thinkingTime);
+        handleClick(move);
       }
       setIsBotTurn(false);
     }
@@ -132,5 +139,7 @@ export const useTicTacToe = () => {
     handleRestartGame,
     handleClick,
     winningLine,
+    thinkingTime,
+    positionsEvaluated,
   };
 };

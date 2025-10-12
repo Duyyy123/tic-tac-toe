@@ -28,7 +28,7 @@ const getEasyMove = (squares) => {
     .filter((val) => val !== null);
   const randomMove =
     availableSquares[Math.floor(Math.random() * availableSquares.length)];
-  return randomMove;
+  return { move: randomMove, positionsEvaluated: 0, thinkingTime: 0 };
 };
 
 const minimax = (board, depth, isMaximizing) => {
@@ -67,8 +67,10 @@ const minimax = (board, depth, isMaximizing) => {
 const getHardMove = (squares) => {
   // Implement hard bot logic here
   console.log("Hard bot move");
+  const startTime = performance.now();
   let bestScore = -Infinity;
   let move = null;
+  let positionsEvaluated = 0;
 
   for (let i = 0; i < squares.length; i++) {
     if (!squares[i]) {
@@ -76,14 +78,19 @@ const getHardMove = (squares) => {
       const newBoard = [...squares];
       newBoard[i] = "O"; // simulate AI move
       const score = minimax(newBoard, 0, false); // next turn is player
+      positionsEvaluated++;
+      console.log(`Move ${i} score: ${score}`);
       if (score > bestScore) {
         bestScore = score;
         move = i;
       }
     }
   }
+  const endTime = performance.now();
+  const thinkingTime = endTime - startTime;
+  console.log(`Hard move calculation time: ${thinkingTime}ms`);
 
-  return move; // return the best index for AI to play
+  return { move, positionsEvaluated, thinkingTime }; // return the best index for AI to play
 };
 
 export const getBestMove = (squares, difficulty) => {
@@ -92,4 +99,5 @@ export const getBestMove = (squares, difficulty) => {
   } else if (difficulty === "hard") {
     return getHardMove(squares);
   }
+  return { move: null, positionsEvaluated: 0, thinkingTime: 0 };
 };

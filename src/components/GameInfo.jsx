@@ -1,4 +1,8 @@
 const GameInfo = ({
+  mode,
+  difficulty,
+  positionsEvaluated,
+  thinkingTime,
   currentPlayer,
   winner,
   xCount,
@@ -28,7 +32,22 @@ const GameInfo = ({
           <span>Draws:</span>
           <span>{dCount}</span>
         </div>
-      </div>
+      </div>{" "}
+      {mode === "bot" && difficulty === "hard" && (
+        <div className="performance-metrics">
+          <h4 className="metrics-title">Performance Metrics</h4>
+          <div className="metrics-content">
+            <div className="metric-item">
+              <span>Positions Evaluated:</span>
+              <span className="metric-value">{positionsEvaluated || 0}</span>
+            </div>
+            <div className="metric-item">
+              <span>Thinking Time:</span>
+              <span className="metric-value">{thinkingTime || 0} ms</span>
+            </div>
+          </div>
+        </div>
+      )}
       <button className="reset-button" onClick={handleRestartGame}>
         Restart Game
       </button>

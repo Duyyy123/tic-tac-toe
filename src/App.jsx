@@ -19,6 +19,8 @@ const App = () => {
     handleRestartGame,
     handleClick,
     winningLine,
+    thinkingTime,
+    positionsEvaluated,
   } = useTicTacToe();
 
   return (
@@ -38,6 +40,10 @@ const App = () => {
             onDifficultyChange={handleDifficultyChange}
           />
           <GameInfo
+            mode={gameMode}
+            difficulty={botDifficulty}
+            positionsEvaluated={positionsEvaluated}
+            thinkingTime={thinkingTime}
             currentPlayer={currentPlayer}
             winner={winner}
             oCount={oCount}
