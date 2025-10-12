@@ -206,39 +206,75 @@
 
 @media (max-width: 768px) {
   .game-container {
-    padding: 1rem;
+    padding: 0.5rem;
+    gap: 1rem;
+    min-height: auto;
   }
 
   .game-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
   }
 
   .game-content {
-    gap: 1rem;
+    gap: 0.75rem;
     overflow-x: auto;
+    width: 100%;
   }
 
   .board {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .board-grid {
-    width: 240px;
-    gap: 0.5rem;
+    width: 180px;
+    gap: 0.4rem;
   }
 
   .square {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .game-sidebar {
     flex-direction: row;
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-shrink: 0;
   }
 
   .mode-selector,
   .game-info {
-    min-width: 200px;
-    padding: 1rem;
+    min-width: 160px;
+    padding: 0.75rem;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .mode-title,
+  .difficulty-title {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .status {
+    font-size: 1.125rem;
+  }
+
+  .score-item {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .reset-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .metrics-title {
+    font-size: 0.875rem;
+  }
+
+  .metric-item {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
   }
 }
