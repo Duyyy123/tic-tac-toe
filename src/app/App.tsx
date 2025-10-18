@@ -1,8 +1,9 @@
-import Board from "./components/Board";
-import GameInfo from "./components/GameInfo";
-import "./App.css";
-import { useTicTacToe } from "./hooks/useTicTacToe";
-import ModeSelector from "./components/ModeSelector";
+import Board from "../features/tic-tac-toe/components/Board";
+import GameInfo from "../features/tic-tac-toe/components/GameInfo";
+import ModeSelector from "../features/tic-tac-toe/components/ModeSelector";
+import { useGame } from "../features/tic-tac-toe/hooks/useGame";
+import { useBot } from "../features/tic-tac-toe/hooks/useBot";
+import "../styles/globals.css";
 
 const App = () => {
   const {
@@ -11,6 +12,7 @@ const App = () => {
     currentPlayer,
     squares,
     winner,
+    winningLine,
     oCount,
     xCount,
     dCount,
@@ -18,10 +20,16 @@ const App = () => {
     handleDifficultyChange,
     handleRestartGame,
     handleClick,
-    winningLine,
-    thinkingTime,
-    positionsEvaluated,
-  } = useTicTacToe();
+  } = useGame();
+
+  const { thinkingTime, positionsEvaluated } = useBot(
+    gameMode,
+    botDifficulty,
+    squares,
+    currentPlayer,
+    winner,
+    handleClick
+  );
 
   return (
     <div className="game-container">

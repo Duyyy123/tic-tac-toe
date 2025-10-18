@@ -1,3 +1,18 @@
+import { GameMode, BotDifficulty, SquareValue } from "../types";
+
+interface GameInfoProps {
+  mode: GameMode;
+  difficulty: BotDifficulty;
+  positionsEvaluated: number;
+  thinkingTime: number;
+  currentPlayer: "X" | "O";
+  winner: SquareValue | "Draw";
+  oCount: number;
+  xCount: number;
+  dCount: number;
+  handleRestartGame: () => void;
+}
+
 const GameInfo = ({
   mode,
   difficulty,
@@ -9,12 +24,12 @@ const GameInfo = ({
   oCount,
   dCount,
   handleRestartGame,
-}) => {
+}: GameInfoProps) => {
   return (
     <div className="game-info">
       <div className="status">
         {winner
-          ? winner == "Draw"
+          ? winner === "Draw"
             ? `Draw`
             : `Winner: ${winner}`
           : `Current Player: ${currentPlayer}`}
@@ -32,7 +47,7 @@ const GameInfo = ({
           <span>Draws:</span>
           <span>{dCount}</span>
         </div>
-      </div>{" "}
+      </div>
       {mode === "bot" && difficulty === "hard" && (
         <div className="performance-metrics">
           <h4 className="metrics-title">Performance Metrics</h4>
@@ -43,7 +58,7 @@ const GameInfo = ({
             </div>
             <div className="metric-item">
               <span>Thinking Time:</span>
-              <span className="metric-value">{thinkingTime || 0} ms</span>
+              <span className="metric-value">{thinkingTime?.toFixed(2) || 0} ms</span>
             </div>
           </div>
         </div>

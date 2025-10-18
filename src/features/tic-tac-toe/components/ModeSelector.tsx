@@ -1,12 +1,20 @@
-import { RadioGroup, RadioGroupItem } from "./radio-group";
-import { Label } from "./label";
+import { RadioGroup, RadioGroupItem } from "../../../shared/components/RadioGroup";
+import { Label } from "../../../shared/components/Label";
+import { GameMode, BotDifficulty } from "../types";
+
+interface ModeSelectorProps {
+  mode: GameMode;
+  difficulty: BotDifficulty;
+  onModeChange: (mode: GameMode) => void;
+  onDifficultyChange: (difficulty: BotDifficulty) => void;
+}
 
 const ModeSelector = ({
   mode,
   difficulty,
   onModeChange,
   onDifficultyChange,
-}) => {
+}: ModeSelectorProps) => {
   return (
     <div className="mode-selector">
       <h3 className="mode-title">Game Mode</h3>
