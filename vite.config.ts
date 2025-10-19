@@ -9,7 +9,6 @@ export default defineConfig({
     port: 8080,
   },
   plugins: [react()],
-  base: "/tic-tac-toe/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

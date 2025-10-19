@@ -1,79 +1,73 @@
-
 import { useState, useEffect } from "react";
-import { SquareValue, GameMode, BotDifficulty } from "../types";
-import { calculateWinner } from "../lib/gameLogic";
+import { Player } from "../types";
 
-export const useGame = () => {
-  const [gameMode, setGameMode] = useState<GameMode>("bot");
-  const [botDifficulty, setBotDifficulty] = useState<BotDifficulty>("easy");
-  const [currentPlayer, setCurrentPlayer] = useState<"X" | "O">("X");
-  const [squares, setSquares] = useState<SquareValue[]>(Array(9).fill(null));
-  const [winner, setWinner] = useState<SquareValue | "Draw">(null);
-  const [winningLine, setWinningLine] = useState<number[] | null>(null);
-  const [xCount, setXCount] = useState(0);
-  const [oCount, setOCount] = useState(0);
-  const [dCount, setDCount] = useState(0);
+const WS_URL = "ws://localhost:9091";
 
-  const handleGameModeChange = (mode: GameMode) => {
-    setGameMode(mode);
-    resetGame();
-  };
-
-  const handleDifficultyChange = (difficulty: BotDifficulty) => {
-    setBotDifficulty(difficulty);
-    resetGame();
-  };
-
-  const handleRestartGame = () => {
-    resetGame();
-  };
-
-  const handleClick = (i: number) => {
-    if (winner || squares[i]) {
-      return;
-    }
-
-    const newSquares = [...squares];
-    newSquares[i] = currentPlayer;
-    setSquares(newSquares);
-    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-  };
-
-  const resetGame = () => {
-    setSquares(Array(9).fill(null));
-    setCurrentPlayer("X");
-    setWinner(null);
-    setWinningLine(null);
-  };
+export const useGame = (gameId: string) => {
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [board, setBoard] = useState<number[]>(Array(25).fill(0));
+  const [status, setStatus] = useState("Connecting...");
+  const [winner, setWinner] = useState<Player | null>(null);
 
   useEffect(() => {
-    const result = calculateWinner(squares);
-    if (result) {
-      setWinner(result.winner);
-      setWinningLine(result.winningLine);
-      if (result.winner === "X") {
-        setXCount((prev) => prev + 1);
-      } else if (result.winner === "O") {
-        setOCount((prev) => prev + 1);
-      } else if (result.winner === "Draw") {
-        setDCount((prev) => prev + 1);
-      }
-    }
-  }, [squares]);
+    const ws = new WebSocket(WS_URL);
 
-  return {
-    gameMode,
-    botDifficulty,
-    currentPlayer,
-    squares,
-    winner,
-    winningLine,
-    xCount,
-    oCount,
-    dCount,
-    handleGameModeChange,
-    handleDifficultyChange,
-    handleRestartGame,
-    handleClick,
+    ws.onopen = () => {
+      const playerId = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("playerId="))
+        ?.split("=")[1];
+      ws.send(JSON.stringify({ type: "JOIN", gameId, playerId }));
+      setStatus("Waiting for opponent...");
+      setWs(ws);
+    };
+
+    ws.onmessage = (e) => {
+      const message = JSON.parse(e.data);
+      switch (message.type) {
+        case "PLAYER_ASSIGNED":
+          setPlayer(message.player);
+          setBoard(message.board);
+          setStatus("Connected");
+          break;
+        case "UPDATE":
+          setBoard((prevBoard) => {
+            const newBoard = [...prevBoard];
+            newBoard[message.square] = message.value;
+            return newBoard;
+          });
+          break;
+        case "GAME_OVER":
+          setWinner(message.winner);
+          break;
+        case "ERROR":
+          setStatus(message.message);
+          break;
+      }
+    };
+
+    ws.onclose = () => {
+      setStatus("Disconnected");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [gameId]);
+
+  const handleClick = (i: number) => {
+    if (ws && winner === null) {
+      ws.send(JSON.stringify({ type: "INCREMENT", gameId, square: i }));
+    }
   };
+
+  const handleRestart = () => {
+    if (ws) {
+      ws.send(JSON.stringify({ type: "RESTART", gameId }));
+      setWinner(null);
+    }
+  };
+
+  return { player, board, status, winner, handleClick, handleRestart };
 };

@@ -1,13 +1,13 @@
+
 import { SquareValue } from "../types";
 import Square from "./Square";
 
 interface BoardProps {
   squares: SquareValue[];
-  winningLine: number[] | null;
   handleClick: (i: number) => void;
 }
 
-const Board = ({ squares, winningLine, handleClick }: BoardProps) => {
+const Board = ({ squares, handleClick }: BoardProps) => {
   return (
     <div className="board">
       <div className="board-grid">
@@ -15,7 +15,6 @@ const Board = ({ squares, winningLine, handleClick }: BoardProps) => {
           <Square
             key={index}
             value={value}
-            isWinning={winningLine?.includes(index) ?? false}
             handleClick={() => handleClick(index)}
           />
         ))}

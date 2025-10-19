@@ -1,7 +1,3 @@
+export type SquareValue = number;
 
-export type SquareValue = "X" | "O" | null;
-
-export type GameMode = "player" | "bot";
-
-export type BotDifficulty = "easy" | "hard";
-
+export type Player = "ODD" | "EVEN";
