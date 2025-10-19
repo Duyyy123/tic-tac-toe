@@ -1,35 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Player } from "../types";
 
 const WS_URL = "ws://localhost:9091";
 
-export const useGame = (gameId: string) => {
-  const [ws, setWs] = useState<WebSocket | null>(null);
+export const useGame = () => {
+  const ws = useRef<WebSocket | null>(null);
   const [player, setPlayer] = useState<Player | null>(null);
   const [board, setBoard] = useState<number[]>(Array(25).fill(0));
   const [status, setStatus] = useState("Connecting...");
   const [winner, setWinner] = useState<Player | null>(null);
+  const [gameId, setGameId] = useState<number | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(WS_URL);
+    const socket = new WebSocket(WS_URL);
+    ws.current = socket;
 
-    ws.onopen = () => {
-      const playerId = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("playerId="))
-        ?.split("=")[1];
-      ws.send(JSON.stringify({ type: "JOIN", gameId, playerId }));
-      setStatus("Waiting for opponent...");
-      setWs(ws);
+    socket.onopen = () => {
+      setStatus("Connecting to server...");
     };
 
-    ws.onmessage = (e) => {
+    socket.onmessage = (e) => {
       const message = JSON.parse(e.data);
       switch (message.type) {
+        case "STATUS":
+          setStatus(message.message);
+          break;
         case "PLAYER_ASSIGNED":
           setPlayer(message.player);
           setBoard(message.board);
-          setStatus("Connected");
+          setGameId(message.gameId);
+          setStatus("Game started!");
           break;
         case "UPDATE":
           setBoard((prevBoard) => {
@@ -44,30 +44,34 @@ export const useGame = (gameId: string) => {
         case "ERROR":
           setStatus(message.message);
           break;
+        case "RESTARTED":
+          setBoard(message.board);
+          setWinner(null);
+          setStatus("Game restarted!");
+          break;
       }
     };
 
-    ws.onclose = () => {
+    socket.onclose = () => {
       setStatus("Disconnected");
     };
 
     return () => {
-      ws.close();
+      socket.close();
     };
-  }, [gameId]);
+  }, []);
 
   const handleClick = (i: number) => {
-    if (ws && winner === null) {
-      ws.send(JSON.stringify({ type: "INCREMENT", gameId, square: i }));
+    if (ws.current && winner === null) {
+      ws.current.send(JSON.stringify({ type: "INCREMENT", square: i }));
     }
   };
 
   const handleRestart = () => {
-    if (ws) {
-      ws.send(JSON.stringify({ type: "RESTART", gameId }));
-      setWinner(null);
+    if (ws.current) {
+      ws.current.send(JSON.stringify({ type: "RESTART" }));
     }
   };
 
-  return { player, board, status, winner, handleClick, handleRestart };
+  return { player, board, status, winner, gameId, handleClick, handleRestart };
 };

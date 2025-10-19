@@ -4,7 +4,7 @@ interface GameInfoProps {
   player: Player | null;
   status: string;
   handleRestartGame: () => void;
-  gameId: string;
+  gameId: number | null;
 }
 
 const GameInfo = ({ player, status, handleRestartGame, gameId }: GameInfoProps) => {
@@ -14,7 +14,7 @@ const GameInfo = ({ player, status, handleRestartGame, gameId }: GameInfoProps) 
         {player ? `You are the ${player} player` : ""}
       </div>
       <div className="status">Status: {status}</div>
-      <div className="status">Game ID: {gameId}</div>
+      {gameId && <div className="status">Game ID: {gameId}</div>}
       <button className="reset-button" onClick={handleRestartGame}>
         Restart Game
       </button>

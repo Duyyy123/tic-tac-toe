@@ -1,22 +1,23 @@
-
 import Board from "../features/tic-tac-toe/components/Board";
 import GameInfo from "../features/tic-tac-toe/components/GameInfo";
 import { useGame } from "../features/tic-tac-toe/hooks/useGame";
 import "../styles/globals.css";
 
-interface GameProps {
-  gameId: string;
-}
-
-const Game = ({ gameId }: GameProps) => {
-  const { player, board, status, winner, handleClick, handleRestart } = useGame(gameId);
+const Game = () => {
+  const { player, board, status, winner, gameId, handleClick, handleRestart } =
+    useGame();
 
   return (
     <div className="game-container">
       <h1 className="game-title">Odd/Even Tic-Tac-Toe</h1>
       <div className="game-content">
         <Board squares={board} handleClick={handleClick} />
-        <GameInfo player={player} status={status} handleRestartGame={handleRestart} gameId={gameId} />
+        <GameInfo
+          player={player}
+          status={status}
+          handleRestartGame={handleRestart}
+          gameId={gameId}
+        />
       </div>
       {winner && (
         <div className="game-over-overlay">
